@@ -1,8 +1,9 @@
 package routers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
+	"text/template"
 
 	"github.com/gorilla/mux"
 )
@@ -15,11 +16,19 @@ func RunRouters() *mux.Router {
 }
 
 func homeHandleFunc(w http.ResponseWriter, r *http.Request) {
+	tpl, err := template.ParseFiles("views/html/index.html")
+	if err != nil {
+		log.Fatal(err)
+	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "Home Page")
+	tpl.Execute(w, nil)
 }
 
 func productsHandleFunc(w http.ResponseWriter, r *http.Request) {
+	tpl, err := template.ParseFiles("views/html/products.html")
+	if err != nil {
+		log.Fatal(err)
+	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprint(w, "List of products")
+	tpl.Execute(w, nil)
 }

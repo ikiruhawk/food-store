@@ -1,14 +1,19 @@
 package routers
 
 import (
+	"html/template"
+	"io"
 	"net/http"
 	"strconv"
-	"text/template"
 
-	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
 )
 
-var tpl *template.Template
+type templateRenderer struct {
+	templates *template.Template
+}
+
+var tpl *templateRenderer
 
 type product struct {
 	Id          int
@@ -18,32 +23,42 @@ type product struct {
 	Description string
 }
 
-func RunRouters() *mux.Router {
-	tpl, _ = template.ParseGlob("views/html/*.html")
-	r := mux.NewRouter()
-	r.HandleFunc("/", homeHandleFunc).Methods("GET")
-	r.HandleFunc("/products", productsHandleFunc).Methods("GET")
-	r.HandleFunc("/product/{id:[0-9]+}", productHandleFunc).Methods("GET")
-	return r
+func (t *templateRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	if viewContext, isMap := data.(map[string]interface{}); isMap {
+		viewContext["reverse"] = c.Echo().Reverse
+	}
+
+	return t.templates.ExecuteTemplate(w, name, data)
 }
 
-func homeHandleFunc(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	tpl.ExecuteTemplate(w, "index.html", nil)
+func RunRouters() *echo.Echo {
+	e := echo.New()
+	tpl = &templateRenderer{
+		templates: template.Must(template.ParseGlob("views/html/*.html")),
+	}
+	e.Renderer = tpl
+	e.GET("/", homeHandleFunc)
+	e.GET("/products", productsHandleFunc)
+	e.GET("/product/:id", productHandleFunc)
+	return e
 }
 
-func productsHandleFunc(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
+func homeHandleFunc(c echo.Context) error {
+	return c.Render(http.StatusOK, "index.html", nil)
+}
 
+func productsHandleFunc(c echo.Context) error {
 	prs := getProducts()
 
-	tpl.ExecuteTemplate(w, "products.html", prs)
+	return c.Render(http.StatusOK, "products.html", prs)
 }
 
-func productHandleFunc(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	mv := mux.Vars(r)
-	id, _ := strconv.Atoi(mv["id"])
+func productHandleFunc(c echo.Context) error {
+	pId := c.Param("id")
+	id, err := strconv.Atoi(pId)
+	if err != nil {
+		return err
+	}
 
 	prs := getProducts()
 
@@ -56,7 +71,7 @@ func productHandleFunc(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	tpl.ExecuteTemplate(w, "product.html", p)
+	return c.Render(http.StatusOK, "product.html", p)
 }
 
 func getProducts() []product {

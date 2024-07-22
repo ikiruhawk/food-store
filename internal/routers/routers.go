@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ikiruhawk/food-store/internal/crud"
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,14 +15,6 @@ type templateRenderer struct {
 }
 
 var tpl *templateRenderer
-
-type product struct {
-	Id          int
-	Name        string
-	Category    string
-	Price       float64
-	Description string
-}
 
 func (t *templateRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
 	if viewContext, isMap := data.(map[string]interface{}); isMap {
@@ -39,7 +32,7 @@ func RunRouters() *echo.Echo {
 	e.Renderer = tpl
 	e.GET("/", homeHandleFunc)
 	e.GET("/products", productsHandleFunc)
-	e.GET("/product/:id", productHandleFunc)
+	e.GET("/product/:id", productInfoHandleFunc)
 	return e
 }
 
@@ -48,43 +41,19 @@ func homeHandleFunc(c echo.Context) error {
 }
 
 func productsHandleFunc(c echo.Context) error {
-	prs := getProducts()
+	prs := crud.GetProducts()
 
 	return c.Render(http.StatusOK, "products.html", prs)
 }
 
-func productHandleFunc(c echo.Context) error {
+func productInfoHandleFunc(c echo.Context) error {
 	pId := c.Param("id")
 	id, err := strconv.Atoi(pId)
 	if err != nil {
 		return err
 	}
 
-	prs := getProducts()
-
-	p := product{}
-
-	for _, v := range prs {
-		if v.Id == id {
-			p = v
-			break
-		}
-	}
+	p := crud.GetProductById(id)
 
 	return c.Render(http.StatusOK, "product.html", p)
-}
-
-func getProducts() []product {
-	return []product{
-		{Id: 1, Name: "Potato", Category: "Vegetables", Price: 70.00, Description: "The potato is a starchy tuber that is cooked and eaten as a vegetable."},
-		{Id: 2, Name: "Tomato", Category: "Vegetables", Price: 100.00, Description: "The tomato is a red, juicy fruit that is often used in salads or cooked as a sauce ingredient."},
-		{Id: 3, Name: "Cheeze", Category: "Dairies", Price: 20.00, Description: "Cheese is a dairy product obtained from milk, it is used in cooking, salads, and as a standalone snack."},
-		{Id: 4, Name: "Milk", Category: "Dairies", Price: 60.00, Description: "Milk is a white, nutritious drink produced by mammals and used in cooking, baking, and as a beverage."},
-		{Id: 5, Name: "Apple", Category: "Fruits", Price: 110.00, Description: "The apple is a crisp, juicy fruit that is enjoyed raw or used in cooking and baking."},
-		{Id: 6, Name: "Orange", Category: "Fruits", Price: 50.00, Description: "The orange is a round, juicy citrus fruit that is often eaten fresh or used in juices."},
-		{Id: 7, Name: "Mango", Category: "Fruits", Price: 80.00, Description: "The mango is a sweet, fibrous tropical fruit that is enjoyed fresh or used in desserts and smoothies."},
-		{Id: 8, Name: "Bread", Category: "Baking", Price: 120.00, Description: "Bread is a staple food made from flour, water, yeast or leavening agent, and sometimes other ingredients such as salt and sugar."},
-		{Id: 9, Name: "Bun", Category: "Baking", Price: 40.00, Description: "A bun is a type of bread that is typically sweet and leavened, often served with butter or other spreads."},
-		{Id: 10, Name: "Hotdog", Category: "Baking", Price: 10.00, Description: "A hot dog is a traditional American dish consisting of a fried sausage served in a cut bun."},
-	}
 }

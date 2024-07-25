@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS stores(
+    store_id SERIAL PRIMARY KEY,
+    address VARCHAR(50) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);

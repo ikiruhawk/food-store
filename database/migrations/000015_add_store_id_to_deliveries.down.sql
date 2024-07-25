@@ -1,0 +1,5 @@
+BEGIN;
+
+ALTER TABLE deliveries DROP CONSTRAINT fk_stores;
+
+COMMIT;

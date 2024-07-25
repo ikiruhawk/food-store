@@ -1,0 +1,8 @@
+BEGIN;
+
+ALTER TABLE orders
+DROP CONSTRAINT fk_clients;
+ALTER TABLE orders
+DROP COLUMN client_id;
+
+COMMIT;

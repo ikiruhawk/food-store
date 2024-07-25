@@ -7,3 +7,8 @@ type Product struct {
 	Price       float64
 	Description string
 }
+
+type Category struct {
+	Id   int
+	Name string
+}

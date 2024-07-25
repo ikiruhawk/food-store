@@ -53,7 +53,7 @@ func productInfoHandleFunc(c echo.Context) error {
 		return err
 	}
 
-	p := crud.GetProductById(id)
+	p := *crud.GetProductById(id)
 
 	return c.Render(http.StatusOK, "product.html", p)
 }

@@ -10,8 +10,10 @@
     {{range .}}
     <p>{{.Name}}</p>
     <ul>
-        <li>Category: {{.Category}}</li>
+        <li>Category: {{.Category.Name}}</li>
+        <li>Manufacturer: {{.Manufacturer.Name}}</li>
         <li>Price: {{.Price}}</li>
+        <li>Amount: {{.Amount}}</li>
         <li>Description: {{.Description}}</li>
     </ul>
     {{end}}

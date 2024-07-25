@@ -1,14 +1,21 @@
 package models
 
 type Product struct {
-	Id          int
-	Name        string
-	Category    string
-	Price       float64
-	Description string
+	Id           int
+	Name         string
+	Category     Category
+	Manufacturer Manufacturer
+	Price        int
+	Amount       int
+	Description  string
 }
 
 type Category struct {
+	Id   int
+	Name string
+}
+
+type Manufacturer struct {
 	Id   int
 	Name string
 }

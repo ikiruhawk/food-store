@@ -9,13 +9,14 @@ import (
 	"github.com/ikiruhawk/food-store/internal/models"
 )
 
-// TODO: доделать
 func GetProducts() ([]models.Product, error) {
 	conn := connection.GetConnection()
 	defer conn.Close(context.Background())
 	products := make([]models.Product, 0)
 
-	rows, err := conn.Query(context.Background(), "SELECT product_id, name, price, amount, description FROM products;")
+	rows, err := conn.Query(context.Background(), `SELECT products.product_id, categories.category_id, categories.name, manufacturers.manufacturer_id, manufacturers.name,
+													products.name, products.price, products.amount, products.description FROM products, categories, manufacturers
+													WHERE categories.category_id = products.category_id AND manufacturers.manufacturer_id = products.manufacturer_id;`)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "internal/crud/crud.go GetProducts; Query error: %v\n", err.Error())
 		return []models.Product{}, err
@@ -23,13 +24,19 @@ func GetProducts() ([]models.Product, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var p models.Product
+		var (
+			p models.Product
+			c models.Category
+			m models.Manufacturer
+		)
 
-		err := rows.Scan(p.Id, p.Name, p.Price, p.Amount, p.Description)
+		err := rows.Scan(&p.Id, &c.Id, &c.Name, &m.Id, &m.Name, &p.Name, &p.Price, &p.Amount, &p.Description)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "internal/crud/crud.go GetProducts; Querty scan error: %v\n", err.Error())
 			return []models.Product{}, err
 		}
+		p.Category = c
+		p.Manufacturer = m
 		products = append(products, p)
 	}
 

@@ -6,6 +6,7 @@ type Product struct {
 	Category     Category
 	Manufacturer Manufacturer
 	Price        int
+	PriceFloat   float64
 	Amount       int
 	Description  string
 }

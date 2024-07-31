@@ -37,6 +37,7 @@ func GetProducts() ([]models.Product, error) {
 		}
 		p.Category = c
 		p.Manufacturer = m
+		p.PriceFloat = float64(p.Price) / 100
 		products = append(products, p)
 	}
 

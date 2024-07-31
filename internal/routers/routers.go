@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"fmt"
 	"html/template"
 	"io"
 	"net/http"
@@ -45,10 +44,6 @@ func productsHandleFunc(c echo.Context) error {
 	prs, err := crud.GetProducts()
 	if err != nil {
 		return err
-	}
-
-	for _, v := range prs {
-		fmt.Println(v)
 	}
 
 	return c.Render(http.StatusOK, "products.html", prs)

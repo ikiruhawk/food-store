@@ -44,7 +44,7 @@ func GetProducts() ([]models.Product, error) {
 	return products, nil
 }
 
-func getCategories() ([]models.Category, error) {
+func GetCategories() ([]models.Category, error) {
 	conn := connection.GetConnection()
 	defer conn.Close(context.Background())
 	categories := make([]models.Category, 0)
@@ -69,7 +69,7 @@ func getCategories() ([]models.Category, error) {
 	return categories, nil
 }
 
-func getManufacturers() ([]models.Manufacturer, error) {
+func GetManufacturers() ([]models.Manufacturer, error) {
 	conn := connection.GetConnection()
 	defer conn.Close(context.Background())
 	manufacturers := make([]models.Manufacturer, 0)

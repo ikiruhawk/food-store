@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/ikiruhawk/food-store/internal/crud"
+	"github.com/ikiruhawk/food-store/internal/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -45,8 +46,26 @@ func productsHandleFunc(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+	cgs, err := crud.GetCategories()
+	if err != nil {
+		return err
+	}
+	mfs, err := crud.GetManufacturers()
+	if err != nil {
+		return err
+	}
 
-	return c.Render(http.StatusOK, "products.html", prs)
+	data := struct {
+		Products  []models.Product
+		Categories []models.Category
+		Manufacturers []models.Manufacturer
+	}{
+		Products: prs,
+		Categories: cgs,
+		Manufacturers: mfs,
+	}
+
+	return c.Render(http.StatusOK, "products.html", data)
 }
 
 func productInfoHandleFunc(c echo.Context) error {

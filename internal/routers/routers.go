@@ -38,7 +38,7 @@ func RunRouters() *echo.Echo {
 }
 
 func homeHandleFunc(c echo.Context) error {
-	return c.Render(http.StatusOK, "index.html", nil)
+	return c.JSON(http.StatusOK, nil)
 }
 
 func productsHandleFunc(c echo.Context) error {
@@ -56,16 +56,16 @@ func productsHandleFunc(c echo.Context) error {
 	}
 
 	data := struct {
-		Products  []models.Product
-		Categories []models.Category
-		Manufacturers []models.Manufacturer
+		Products      []models.Product      `json:"products"`
+		Categories    []models.Category     `json:"categories"`
+		Manufacturers []models.Manufacturer `json:"manufacturers"`
 	}{
-		Products: prs,
-		Categories: cgs,
+		Products:      prs,
+		Categories:    cgs,
 		Manufacturers: mfs,
 	}
 
-	return c.Render(http.StatusOK, "products.html", data)
+	return c.JSON(http.StatusOK, data)
 }
 
 func productInfoHandleFunc(c echo.Context) error {
@@ -77,5 +77,5 @@ func productInfoHandleFunc(c echo.Context) error {
 
 	p := *crud.GetProductById(id)
 
-	return c.Render(http.StatusOK, "product.html", p)
+	return c.JSON(http.StatusOK, p)
 }

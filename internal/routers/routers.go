@@ -1,36 +1,21 @@
 package routers
 
 import (
-	"html/template"
-	"io"
 	"net/http"
 	"strconv"
 
 	"github.com/ikiruhawk/food-store/internal/crud"
 	"github.com/ikiruhawk/food-store/internal/models"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
-
-type templateRenderer struct {
-	templates *template.Template
-}
-
-var tpl *templateRenderer
-
-func (t *templateRenderer) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	if viewContext, isMap := data.(map[string]interface{}); isMap {
-		viewContext["reverse"] = c.Echo().Reverse
-	}
-
-	return t.templates.ExecuteTemplate(w, name, data)
-}
 
 func RunRouters() *echo.Echo {
 	e := echo.New()
-	tpl = &templateRenderer{
-		templates: template.Must(template.ParseGlob("views/html/*.html")),
-	}
-	e.Renderer = tpl
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+	}))
 	e.GET("/", homeHandleFunc)
 	e.GET("/products", productsHandleFunc)
 	e.GET("/product/:id", productInfoHandleFunc)

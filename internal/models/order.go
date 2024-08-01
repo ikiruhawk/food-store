@@ -3,15 +3,15 @@ package models
 import "time"
 
 type Order struct {
-	Id            int
-	ClientAddress ClientAddress
-	Date          time.Time
-	Price         int
+	Id            int           `json:"id"`
+	ClientAddress ClientAddress `json:"clientAddress"`
+	Date          time.Time     `json:"date"`
+	Price         int           `json:"price"`
 }
 
 type OrderProducts struct {
-	Id      int
-	Order   Order
-	Product Product
-	Amount  int
+	Id      int     `json:"id"`
+	Order   Order   `json:"order"`
+	Product Product `json:"product"`
+	Amount  int     `json:"amount"`
 }
